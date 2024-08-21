@@ -15,6 +15,7 @@ async function startDatabase() {
     const uri = "mongodb://localhost:27017/?maxPoolSize=20&w=majority";	
     const connection = await MongoClient.connect(uri, {useNewUrlParser: true});
     database = connection.db();
+    console.log("Conectado a MongoDB"); // Log para confirmar la conexion a MongoDB
 }
 
 async function getDatabase() {
@@ -42,9 +43,41 @@ app.use(express.static('spa/static'));
 const PORT = 8080;
 
 app.post('/measurement', function (req, res) {
--       console.log("device id    : " + req.body.id + " key         : " + req.body.key + " temperature : " + req.body.t + " humidity    : " + req.body.h);	
-    const {insertedId} = insertMeasurement({id:req.body.id, t:req.body.t, h:req.body.h});
-	res.send("received measurement into " +  insertedId);
+        const { id, t, h, error, key } = req.body; // Agregamos el campo error para desafio error y key para desafio auth
+
+        const timestamp = new Date().toISOString(); // Agregar timestamp
+        
+        if (error && parseInt(error) !== 0) {
+            console.log("Error de lectura en el dispositivo");
+            console.log("device id    : " + id + " temperature : " + t + " humidity    : " + h + " error: " + error + " timestamp: " + timestamp);
+            return res.status(422).send("Error de lectura en el dispositivo");
+        }
+                
+        //console.log("ID del dispositivo recibido:", id);
+        //console.log("Clave recibida:", key);
+        //console.log("Timestamp:", timestamp);
+        
+        // Recuperamos todos los dispositivos
+        const devices = db.public.many("SELECT * FROM devices");
+
+        // Filtramos el dispositivo por id
+        const device = devices.find(device => device.device_id === id);
+
+        //console.log("Dispositivo encontrado:", device);
+
+        // Verificar si el dispositivo existe y la clave es correcta
+        if (!device || device.key !== key) {
+            console.log("Clave de dispositivo incorrecta o dispositivo no encontrado");
+            return res.status(401).send("Clave de dispositivo incorrecta o dispositivo no encontrado");
+        }
+
+        console.log("device id    : " + id + " temperature : " + t + " humidity    : " + h + " error: " + error + " timestamp: " + timestamp); // Agregamos los campos error y timestamp en el log	
+    
+    // Insertamos la medición, el error y el timestamp en la base de datos
+    //const {insertedId} = insertMeasurement({id:req.body.id, t:req.body.t, h:req.body.h, error:req.body.error});
+	const {insertedId} = insertMeasurement({ id, t, h, error, timestamp });
+    res.send("received measurement into " +  insertedId);
+
 });
 
 app.post('/device', function (req, res) {

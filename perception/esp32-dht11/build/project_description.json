@@ -1,7 +1,7 @@
 {
     "version":            "1",
     "project_name":       "ceiot_base",
-    "project_version":    "62cfdb6",
+    "project_version":    "953b945-dirty",
     "project_path":       "/home/iiot/ceiot_base/perception/esp32-dht11",
     "idf_path":           "/home/iiot/esp/esp-idf",
     "build_dir":          "/home/iiot/ceiot_base/perception/esp32-dht11/build",

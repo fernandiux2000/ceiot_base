@@ -28,13 +28,16 @@
 /* HTTP Constants that aren't configurable in menuconfig */
 #define WEB_PATH "/measurement"
 
+#define DEVICE_KEY "123456"  // Clave del dispositivo
+#define DEVICE_ID "00"
+
 static const gpio_num_t dht_gpio = ONE_WIRE_GPIO;
 
 static const dht_sensor_type_t sensor_type = DHT_TYPE_DHT11;
 
 static const char *TAG = "temp_collector";
 
-static char *BODY = "id="DEVICE_ID"&t=%0.2f&h=%0.2f";
+static char *BODY = "id="DEVICE_ID"&t=%0.2f&h=%0.2f&error=%d&key="DEVICE_KEY""; // Para asegurarnos que se incluya el campo error y la key
 
 static char *REQUEST_POST = "POST "WEB_PATH" HTTP/1.0\r\n"
     "Host: "API_IP_PORT"\r\n"
@@ -53,23 +56,33 @@ static void http_get_task(void *pvParameters)
     struct addrinfo *res;
     struct in_addr *addr;
     int s, r;
-    char body[64];
+    char body[128];
     char recv_buf[64];
 
-    char send_buf[256];
+    char send_buf[512];
 
     int16_t temperature = 0;
     int16_t humidity = 0;
+
+    int error_code = 0; // Variable para el código de error
+
  
     while(1) {
         if (dht_read_data(sensor_type, dht_gpio, &humidity, &temperature) == ESP_OK) {
+            error_code = 0; // Cuando no hay error en la lectura
             ESP_LOGI(TAG,"Humidity: %d%% Temp: %dC\n", humidity / 10, temperature / 10);
-            sprintf(body, BODY, (float) temperature/10  , (float) humidity/10);
-            sprintf(send_buf, REQUEST_POST, (int)strlen(body),body );
-	    ESP_LOGI(TAG,"sending: \n%s\n",send_buf);
+            
+	    //ESP_LOGI(TAG,"sending: \n%s\n",send_buf);
         } else {
+            error_code = 1; // Cuando hay error en la lectura
             ESP_LOGE(TAG,"Could not read data from sensor\n");
         }
+        
+        sprintf(body, BODY, (float) temperature/10  , (float) humidity/10, error_code); // Agregamos el código de error en el mensaje HTTP
+        
+        // Construimos el mensaje HTTP completo
+        sprintf(send_buf, REQUEST_POST, (int)strlen(body),body ); 
+        ESP_LOGI(TAG, "sending: \n%s\n", send_buf);
 
         int err = getaddrinfo(API_IP, API_PORT, &hints, &res);
 
