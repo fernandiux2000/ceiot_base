@@ -4,7 +4,7 @@ Rodrigo Morocho
 
 Sistema víctima
 
-El sistema domótico controla el encendido y apagado de luces, así como la gestión del aire acondicionado (encendido, apagado y regulación de temperatura). Este sistema está compuesto por dispositivos ESP32 y Raspberry Pi, utiliza una base de datos MongoDB y está orquestado mediante Node-RED.
+Sistema domótico que controla el encendido y apagado de luces, así como la gestión del aire acondicionado (encendido, apagado y regulación de temperatura). Este sistema está compuesto por dispositivos ESP32 y Raspberry Pi, utiliza una base de datos MongoDB y está orquestado mediante Node-RED.
 
 Objetivo
 
