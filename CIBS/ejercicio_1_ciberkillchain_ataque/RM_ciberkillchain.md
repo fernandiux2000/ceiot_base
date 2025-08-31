@@ -1,13 +1,13 @@
-# CiberKillChain - Ataque a Sistema IoT
+# CiberKillChain - Ataque a sistema de Monitoreo ambiental IoT
 
 ## Alumno
-*  **Alumno:** Rodrigo Morocho Roman
+* **Alumno:** Rodrigo Morocho Roman
 
 ## Sistema víctima
-Un sistema IoT de monitoreo ambiental compuesto por:
-* **Hardware:** Un ESP32 con sensores de temperatura/humedad (DHT11) y calidad de aire (MQ-2).
-* **Backend Dockerizado:** Un bróker MQTT (Mosquitto), una API en Node.js y una base de datos MongoDB.
-* **Frontend Dockerizado:** Un dashboard en Angular/Ionic que muestra los datos en tiempo real y dispara alarmas visuales si los valores superan ciertos umbrales.
+El sistema, denominado "Monitoreo ambiental IoT", es una solución de monitoreo de entornos controlados compuesta por:
+* **Hardware:** Un dispositivo ESP32 con sensores de temperatura/humedad (DHT11) y calidad del aire (MQ-2).
+* **Backend Dockerizado:** Un bróker MQTT (Mosquitto), una API en Node.js para procesar y servir datos, y una base de datos MongoDB para el almacenamiento.
+* **Frontend Dockerizado:** Un dashboard en Angular/Ionic que visualiza los datos en tiempo real mediante medidores y dispara alarmas visuales cuando los valores superan umbrales predefinidos.
 
 ## Objetivo
-Minar la capacidad operativa y la reputación de una empresa competidora, explotando una vulnerabilidad de acceso anónimo en su sistema IoT para inyectar datos falsos; esto se realiza en un momento crítico, como la inspección de un cliente, para disparar alarmas de emergencia inexistentes, con el fin de simular una falla catastrófica, destruir la credibilidad de la víctima y asegurar que un lucrativo contrato sea adjudicado a la empresa que orquestó el ataque.
+Sabotear el sistema "Monitoreo ambiental IoT" de una empresa rival, inyectando datos falsos vía MQTT para disparar alarmas críticas de sobrecalentamiento y gas durante una auditoría clave de un cliente, para provocar su descalificación inmediata y asegurar que el lucrativo contrato sea adjudicado de forma exclusiva a la empresa competidora que orquestó el ataque, garantizando así un rédito económico directo.
