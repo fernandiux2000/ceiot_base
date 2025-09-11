@@ -12,6 +12,9 @@ Sabotear el sistema "Monitoreo ambiental IoT", inyectando datos falsos vía MQTT
 ## Resolución
 
 ### 1- Reconnaissance
+
+> Se identificó el uso del protocolo **MQTT**. Un posterior escaneo de puertos al subdominio descubierto (`dashboard.empresa-victima.com`) reveló la vulnerabilidad crítica: un **bróker MQTT expuesto en el puerto 1883 que permite conexiones anónimas**, estableciendo el punto de entrada principal para el ataque.
+
 *Técnicas utilizadas: [T1591 Gather Victim Org Information], [T1590 Gather Victim Host Information], [T1595 Active Scanning]*
 
 El ataque se inicia con una fase de inteligencia de fuentes abiertas (OSINT) para construir un perfil técnico de la empresa víctima, aplicando la técnica **[T1591 Gather Victim Org Information](https://attack.mitre.org/techniques/T1591/)**. Se analizan publicaciones de blog de la empresa, comunicados de prensa sobre su nueva plataforma "Monitoreo ambiental IoT" y ofertas laborales para ingenieros de software. Estas últimas revelan el uso de tecnologías como Docker, Node.js, Angular y, de manera crucial, el protocolo MQTT, lo que proporciona una idea clara de la arquitectura subyacente.
