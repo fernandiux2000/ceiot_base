@@ -51,4 +51,32 @@ La fase de entrega es directa y se ejecuta de forma remota. Utilizando la técni
 
 Se explota la vulnerabilidad inherente del sistema, correspondiente a la técnica **[T1190 Exploit Public-Facing Application](https://attack.mitre.org/techniques/T1190/)**. El bróker MQTT, al recibir el paquete `PUBLISH` entregado en la fase anterior, no realiza ninguna validación de su origen. Debido a la falla **[CWE-345 Insufficient Verification of Data Authenticity](https://cwe.mitre.org/data/definitions/345.html)**, el servidor acepta el payload anónimo y lo procesa como una transmisión válida. En consecuencia, el bróker retransmite inmediatamente el mensaje JSON con los datos falsos a todos los clientes suscritos al tópico `sensores/casa`, incluyendo el `api_server` del backend, que ahora tratará esta información maliciosa como una lectura real del sensor.
 
+### 5- Installation
 
+> En el tipo de ataque de inyección de datos, la fase de Instalación no aplica, ya que el objetivo no es establecer una persistencia en el sistema operativo o dejar un backdoor.
+
+*Técnicas utilizadas: No aplica.*
+
+Esta fase no es necesaria para cumplir el objetivo del ataque. La explotación de la vulnerabilidad del bróker MQTT permite la inyección de datos en tiempo real desde el exterior. El ataque no busca instalar malware, modificar archivos de configuración en el servidor, ni establecer un punto de acceso persistente (backdoor) en el sistema víctima. El efecto del ataque es inmediato a través de la manipulación de los datos que el sistema procesa, por lo que no se requiere una "instalación" para mantener el acceso o asegurar el impacto.
+
+### 6- Command & Control
+
+> El control sobre el sistema se mantiene a través del mismo bróker MQTT, que actúa como un canal de Comando y Control improvisado, permitiendo al atacante enviar nuevos payloads para manipular el estado de las alarmas a voluntad.
+
+*Técnica utilizada: [T1071 Application Layer Protocol]*
+
+En este ataque, no se establece un canal de C2 tradicional con un servidor remoto. En su lugar, se utiliza el propio protocolo de la aplicación víctima como canal de comando y control, lo que corresponde a la técnica **[T1071 Application Layer Protocol](https://attack.mitre.org/techniques/T1071/)**. Se mantiene la capacidad de influir en el sistema de forma remota y persistente simplemente manteniendo el acceso al bróker MQTT abierto. Se puede automatizar la inyección de datos mediante un script local que envíe diferentes payloads JSON en momentos programados, permitiendo al atacante activar o desactivar las falsas alarmas a discreción para maximizar el impacto durante la auditoría del cliente.
+
+### 7- Actions on Objectives
+
+> Finalmente, se utiliza el canal de C2 para ejecutar el ataque en el momento preciso, logrando el objetivo final de sabotaje al desacreditar a la víctima y asegurar el beneficio económico para su cliente.
+
+*Técnicas utilizadas: [T1491 Defacement], [T1565.001 Stored Data Manipulation]*
+
+En el momento exacto en que la empresa víctima está realizando la auditoría final con su cliente potencial, se ejecuta la acción sobre el objetivo. Utilizando el canal de C2 (el bróker MQTT), el atacante publica el payload malicioso con los valores extremos de temperatura y gas.
+
+El primer impacto es una forma de **[T1491 Defacement](https://attack.mitre.org/techniques/T1491/)**: el dashboard, que está siendo presentado al cliente como prueba de la fiabilidad del sistema, se "desfigura" con alarmas críticas en rojo, proyectando una imagen de falla catastrófica e incompetencia.
+
+Simultáneamente, se logra una **[T1565.001 Stored Data Manipulation](https://attack.mitre.org/techniques/T1565/001/)**, ya que estos datos falsos son guardados permanentemente en la base de datos de la víctima, corrompiendo sus registros históricos y dejando una "evidencia" del falso incidente.
+
+El resultado es la pérdida total de confianza por parte del cliente, y, en última instancia, la pérdida del contrato, cumpliendo así el objetivo económico del ataque.
