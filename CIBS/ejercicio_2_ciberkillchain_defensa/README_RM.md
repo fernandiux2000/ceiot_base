@@ -23,7 +23,7 @@ Esta medida se basa en el principio de **Registro y Monitoreo de Seguridad**, un
 * **Implementación:** Se modifica el archivo `mosquitto.conf` para habilitar el registro detallado de eventos (`log_type all`). Esto generará logs con cada conexión, publicación y suscripción, incluyendo la dirección IP y el ID del cliente. Con recursos limitados, se puede configurar un simple script (`cron job/tarea programada`) que revise estos logs periódicamente en busca de anomalías, como conexiones desde direcciones IP no autorizadas o clientes con IDs desconocidos, y envíe una alerta por correo electrónico.
 
 #### Medida de Mitigación: Implementación de Controles de Acceso
-La mitigación más efectiva es eliminar la vulnerabilidad raíz: el acceso anónimo. Esto se logra implementando **Autenticación y Autorización**, dos pilares del control de acceso **[OWASP - Access Control Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Access_Control_Cheat_Sheet.html)**.
+La mitigación más efectiva es eliminar la vulnerabilidad raíz: el acceso anónimo. Esto se logra implementando **Autenticación y Autorización**, dos pilares del control de acceso **[OWASP - Access Control Cheat Sheet]**.
 
 * **Implementación:**
     1.  **Autenticación:** Se deshabilita el acceso anónimo (`allow_anonymous false`) en `mosquitto.conf` y se configura un archivo de contraseñas. A cada cliente legítimo (el ESP32 y el `api_server`) se le asigna un usuario y una contraseña únicos.
