@@ -22,3 +22,11 @@ La medida más eficiente es la mitigación, ya que elimina la causa raíz de la 
 
 1.  **Autenticación:** Se deshabilita el acceso anónimo (`allow_anonymous false`) en `mosquitto.conf` y se exige un usuario y contraseña únicos para cada cliente legítimo (el ESP32 y el `api_server`).
 2.  **Autorización (ACLs):** Se definen Listas de Control de Acceso (ACLs) para aplicar el principio de mínimo privilegio. El usuario del ESP32 solo puede `publicar` en el tópico `sensores/casa`, y el `api_server` solo puede `suscribirse` a él.
+
+### 5- Installation
+> Dado que el ataque no requiere instalar malware, la defensa es proactiva y se enfoca en la mitigación, endureciendo el sistema para que, por diseño, sea dificil que un atacante logre persistencia.
+
+#### Medida de Mitigación: Endurecimiento del Contenedor (Sistema de archivos de solo lectura)
+La medida es el endurecimiento preventivo del sistema, siguiendo las mejores prácticas de seguridad en contenedores como las definidas en el **CIS Docker Benchmark**.
+
+* **Implementación:** Se modifica el archivo `docker-compose.yml` para añadir la directiva `read_only: true` al servicio del `api_server`. Esto instruye a Docker para que monte el sistema de archivos del contenedor en modo de solo lectura. De esta manera, cualquier intento de un atacante por escribir un archivo (instalar un backdoor, un webshell, etc.) fallará a nivel del sistema operativo. Esta medida mitiga de forma proactiva una amplia gama de ataques que buscan establecer persistencia.
