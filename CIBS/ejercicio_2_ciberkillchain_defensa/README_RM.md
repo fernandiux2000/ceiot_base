@@ -30,3 +30,13 @@ La medida más eficiente es la mitigación, ya que elimina la causa raíz de la 
 La medida es el endurecimiento preventivo del sistema, siguiendo las mejores prácticas de seguridad en contenedores como las definidas en el **CIS Docker Benchmark**.
 
 * **Implementación:** Se modifica el archivo `docker-compose.yml` para añadir la directiva `read_only: true` al servicio del `api_server`. Esto instruye a Docker para que monte el sistema de archivos del contenedor en modo de solo lectura. De esta manera, cualquier intento de un atacante por escribir un archivo (instalar un backdoor, un webshell, etc.) fallará a nivel del sistema operativo. Esta medida mitiga de forma proactiva una amplia gama de ataques que buscan establecer persistencia.
+
+### 4- Exploitation
+> Mitigación proactiva, eliminando la capacidad del bróker MQTT de procesar paquetes de origen no verificado, previniendo así la inyección de datos en su origen.
+
+#### Medida de Mitigación: Requerir Autenticación de Clientes
+Se logra aplicando el principio de **Control de Acceso por Autenticación** (ver [OWASP - Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html)).
+
+* **Implementación:** Se modifica el archivo `mosquitto.conf` para establecer `allow_anonymous false` y se le asocia un archivo de contraseñas. Se obliga a que cada cliente que intente conectarse deba presentar un nombre de usuario y una contraseña válidos.
+
+Cuando el paquete malicioso del atacante llega, el bróker verifica las credenciales. Al no tenerlas, **rechaza la conexión y descarta el paquete**. La explotación falla antes de poder ocurrir, neutralizando el ataque en esta etapa.
