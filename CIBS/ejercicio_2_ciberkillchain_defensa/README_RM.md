@@ -40,3 +40,13 @@ Se logra aplicando el principio de **Control de Acceso por Autenticación** (ver
 * **Implementación:** Se modifica el archivo `mosquitto.conf` para establecer `allow_anonymous false` y se le asocia un archivo de contraseñas. Se obliga a que cada cliente que intente conectarse deba presentar un nombre de usuario y una contraseña válidos.
 
 Cuando el paquete malicioso del atacante llega, el bróker verifica las credenciales. Al no tenerlas, **rechaza la conexión y descarta el paquete**. La explotación falla antes de poder ocurrir, neutralizando el ataque en esta etapa.
+
+### 3- Delivery
+> Para impedir la entrega del paquete malicioso, la defensa se centra en la mitigación a nivel de red, implementando una regla de firewall que bloquea el acceso desde cualquier fuente no autorizada.
+
+#### Medida de Mitigación: Firewall perimetral con lista blanca de IPs
+La medida es aplicar el principio de **Defensa Perimetral**. En lugar de dejar el puerto del bróker abierto a todo internet, se restringe el acceso a nivel de red.
+
+* **Implementación:** Se configura el firewall de la red en el router de la infraestructura para **denegar por defecto** todo el tráfico entrante al puerto `1883`. A continuación, se crea una **regla de excepción (lista blanca)** que permite la conexión únicamente desde las direcciones IP públicas y conocidas de los dispositivos IoT legítimos.
+
+Esta única regla de firewall asegura que cuando el atacante intente enviar su paquete desde una ubicación no autorizada, la conexión será bloqueada en la capa de red. El paquete nunca llegará al bróker MQTT, haciendo que la entrega del ataque falle por completo. Esta es una medida de seguridad fundamental y de bajo costo.
