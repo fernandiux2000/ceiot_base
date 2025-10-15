@@ -50,3 +50,16 @@ La medida es aplicar el principio de **Defensa Perimetral**. En lugar de dejar e
 * **Implementación:** Se configura el firewall de la red en el router de la infraestructura para **denegar por defecto** todo el tráfico entrante al puerto `1883`. A continuación, se crea una **regla de excepción (lista blanca)** que permite la conexión únicamente desde las direcciones IP públicas y conocidas de los dispositivos IoT legítimos.
 
 Esta única regla de firewall asegura que cuando el atacante intente enviar su paquete desde una ubicación no autorizada, la conexión será bloqueada en la capa de red. El paquete nunca llegará al bróker MQTT, haciendo que la entrega del ataque falle por completo. Esta es una medida de seguridad fundamental y de bajo costo.
+
+### 2- Weaponization
+> La defensa contra el armado del ataque se centra en la mitigación, implementando un mecanismo de firma digital que garantiza la autenticidad e integridad de cada mensaje, haciendo difícil que un payload fabricado por el atacante sea considerado válido.
+
+#### Medida de Mitigación: Implementación de Firmas digitales en mensajes
+La medida es aplicar el principio de **Integridad y Autenticidad de los Datos**. Cada mensaje MQTT estará firmado digitalmente, utilizando un estándar como **JSON Web Signature (JWS)**.
+
+* **Implementación:**
+1.  Se genera un par de claves criptográficas (pública/privada). La **clave privada** se almacena de forma segura en el dispositivo ESP32. La **clave pública** se almacena en el `api_server`.
+2.  El firmware del ESP32 se modifica para que, antes de publicar cada mensaje JSON, lo firme con la clave privada.
+3.  El `api_server` se modifica para que, antes de procesar cualquier mensaje, verifique la firma utilizando la clave pública.
+
+Si la firma es válida, el dato es auténtico y proviene del sensor legítimo. Si un atacante envía su payload JSON malicioso, este carecerá de una firma válida. El `api_server` lo detectará, descartará el mensaje inmediatamente y puede registrar el evento como un intento de falsificación. Esta medida inutiliza por completo el arma del atacante, ya que no puede falsificar la firma sin la clave privada.
