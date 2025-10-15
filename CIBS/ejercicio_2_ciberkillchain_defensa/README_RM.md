@@ -63,3 +63,13 @@ La medida es aplicar el principio de **Integridad y Autenticidad de los Datos**.
   3.  El `api_server` se modifica para que, antes de procesar cualquier mensaje, verifique la firma utilizando la clave pública.
 
 Si la firma es válida, el dato es auténtico y proviene del sensor legítimo. Si un atacante envía su payload JSON malicioso, este carecerá de una firma válida. El `api_server` lo detectará, descartará el mensaje inmediatamente y puede registrar el evento como un intento de falsificación. Esta medida inutiliza por completo el arma del atacante, ya que no puede falsificar la firma sin la clave privada.
+
+### 1- Reconnaissance
+> La defensa contra el reconocimiento se centra en la mitigación, aplicando el principio de mínima exposición para reducir la superficie de ataque y ocultar información crítica al atacante.
+
+#### Medida de Mitigación: Reducción de la Superficie de Ataque
+La medida consiste en reducir la cantidad de información y servicios expuestos públicamente. Esta es una de las prácticas de seguridad más fundamentales, alineada con guías de endurecimiento de sistemas como las del **NIST (National Institute of Standards and Technology)**.
+
+* **Implementación:**
+    1.  **Control de exposición de red:** La medida más crítica es no exponer servicios innecesarios a internet. El puerto del bróker MQTT (`1883`) nunca debió ser público. Se elimina su mapeo de puertos en el `docker-compose.yml` y se configura el firewall perimetral para bloquear explícitamente cualquier acceso externo a él.
+    2.  **Control de fugas de información:** Se establece una política para revisar toda la información pública (ofertas de trabajo, blogs, comunicados) para eliminar detalles técnicos sensibles sobre la arquitectura interna, versiones de software o protocolos utilizados.
