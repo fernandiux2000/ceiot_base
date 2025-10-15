@@ -58,8 +58,8 @@ Esta única regla de firewall asegura que cuando el atacante intente enviar su p
 La medida es aplicar el principio de **Integridad y Autenticidad de los Datos**. Cada mensaje MQTT estará firmado digitalmente, utilizando un estándar como **JSON Web Signature (JWS)**.
 
 * **Implementación:**
-1.  Se genera un par de claves criptográficas (pública/privada). La **clave privada** se almacena de forma segura en el dispositivo ESP32. La **clave pública** se almacena en el `api_server`.
-2.  El firmware del ESP32 se modifica para que, antes de publicar cada mensaje JSON, lo firme con la clave privada.
-3.  El `api_server` se modifica para que, antes de procesar cualquier mensaje, verifique la firma utilizando la clave pública.
+  1.  Se genera un par de claves criptográficas (pública/privada). La **clave privada** se almacena de forma segura en el dispositivo ESP32. La **clave pública** se almacena en el `api_server`.
+  2.  El firmware del ESP32 se modifica para que, antes de publicar cada mensaje JSON, lo firme con la clave privada.
+  3.  El `api_server` se modifica para que, antes de procesar cualquier mensaje, verifique la firma utilizando la clave pública.
 
 Si la firma es válida, el dato es auténtico y proviene del sensor legítimo. Si un atacante envía su payload JSON malicioso, este carecerá de una firma válida. El `api_server` lo detectará, descartará el mensaje inmediatamente y puede registrar el evento como un intento de falsificación. Esta medida inutiliza por completo el arma del atacante, ya que no puede falsificar la firma sin la clave privada.
